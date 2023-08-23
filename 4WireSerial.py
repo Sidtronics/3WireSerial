@@ -74,14 +74,23 @@ class SerialDevice :
         
 if __name__ == "__main__":
 
+
     dbg = SerialDevice(PORT)
 
     def send(*data:int, count:int=1) :
+
+        print("\n     HEX  BIN        DEC")
+        for n in range(count*len(data)) :
+            print("[{0:02d}] {1:02X} : {1:08b} : {1:03d}".format(n+1, data[n % len(data)]))
 
         sent = dbg.send(*data, count=count)
         print(f"\n{sent} Byte(s) sent.\n")
 
     def send_str(string:str) :
+        
+        print("\n     HEX  BIN        DEC   ASCII")
+        for n in range(len(string)) :
+            print("[{0:02d}] {1:02X} : {1:08b} : {1:03d} : {1:c}".format(n+1, ord(string[n])))
 
         sent = dbg.send_str(string)
         print(f"\n{sent} Character(s) sent.\n")
@@ -101,5 +110,7 @@ if __name__ == "__main__":
         dbg.set_stb(val)
         print("\nStrobe pin held {}.\n".format("HIGH" if val else "LOW"))
 
-    # Start interactive mode.
+    # Start interactive console.
+    print("[4WireSerial] Starting interactive console:\n")
     code.interact(local=locals(),banner="")
+
