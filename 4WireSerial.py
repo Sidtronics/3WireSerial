@@ -12,7 +12,7 @@ class Command(Enum):
     STB_HIGH = 'H'
     STB_LOW = 'L'
 
-# defs for stb().
+# defs for set_stb().
 HIGH = True;
 LOW = False;
 
@@ -23,7 +23,7 @@ class SerialDevice :
         self.ser = serial.Serial()
         self.ser.port = port
 
-        print("Waiting for device at port:", self.ser.name)
+        print("[4WireSerial] Waiting for device at port:", self.ser.name)
         while True:
 
             try:
@@ -31,8 +31,7 @@ class SerialDevice :
             except serial.SerialException:
                 pass
             else:
-                print("Port opened at:", self.ser.name)
-                print("-" * 40)
+                print("[4WireSerial] Port opened at:", self.ser.name)
                 break
 
     def send(self, *data:int, count:int=1) :
@@ -43,44 +42,64 @@ class SerialDevice :
         for _ in range(count) :
             self.ser.write(bytes(data))
 
-        ack = self.ser.read()
-        print(f"\n{int.from_bytes(ack)} Bytes sent.\n")
+        sent_bytes = self.ser.read()
+        return int.from_bytes(sent_bytes)
 
+        
     def send_str(self, string:str) :
 
         self.ser.write(Command.SEND.value.encode())
         self.ser.write(len(string).to_bytes(1))
         self.ser.write(string.encode())
 
-        ack = self.ser.read()
-        print(f"\n{int.from_bytes(ack)} Characters sent.\n")
+        sent_bytes = self.ser.read()
+        return int.from_bytes(sent_bytes)
 
+        
     def recv(self, count:int=1) :
         
         self.ser.write(Command.READ.value.encode())
         self.ser.write(count.to_bytes(1))
         
-        print("\n     HEX  BIN        DEC")
-        for n in range(count) :
-            byte = self.ser.read()
-            print("[{0:02d}] {1:02X} : {1:08b} : {1:03d}".format(n+1, int.from_bytes(byte)))
+        received_bytes = list(self.ser.read(count))
+                
+        return received_bytes
+        
+    def set_stb(self, val:bool) :
 
-        print(f"\n{count} Bytes received.\n")
-
-    def stb(self, sig:bool) :
-
-        if sig == True :
-            cmd = Command.STB_HIGH
-
-        else :
-            cmd = Command.STB_LOW
+        cmd = Command.STB_HIGH if val else Command.STB_LOW
 
         self.ser.write(cmd.value.encode())
-        self.ser.read()
-        print("\nStrobe pin held {}.\n".format(cmd.name[4:]))
-
+        self.ser.read() # ACK
+        
 if __name__ == "__main__":
 
     dbg = SerialDevice(PORT)
-    code.interact(local=locals(),banner="")
 
+    def send(*data:int, count:int=1) :
+
+        sent = dbg.send(*data, count=count)
+        print(f"\n{sent} Byte(s) sent.\n")
+
+    def send_str(string:str) :
+
+        sent = dbg.send_str(string)
+        print(f"\n{sent} Character(s) sent.\n")
+
+    def recv(count:int=1) :
+
+        print("\n     HEX  BIN        DEC")
+
+        received = dbg.recv(count)
+        for n in range(count) :
+            print("[{0:02d}] {1:02X} : {1:08b} : {1:03d}".format(n+1, received[n]))
+
+        print(f"\n{count} Byte(s) received.\n")
+
+    def set_stb(val:bool) :
+
+        dbg.set_stb(val)
+        print("\nStrobe pin held {}.\n".format("HIGH" if val else "LOW"))
+
+    # Start interactive mode.
+    code.interact(local=locals(),banner="")
