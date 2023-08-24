@@ -72,15 +72,23 @@ class SerialDevice :
             sent_bytes += self.send(*data)
 
         self.stb(True)
+        return sent_bytes
 
-        return sent_bytes 
+    def recv_data(self,cmd:int, count:int=1) :
+
+        self.stb(False)
+        self.send(cmd)
+        received_bytes = self.recv(count)
+        self.stb(True)
+
+        return received_bytes
         
 if __name__ == "__main__":
 
 
     dbg = SerialDevice(PORT)
 
-    # Wrapper functions for verbosity and convenience:
+    # Wrapper functions for verbosity and convenience in interactive mode:
 
     def send(*data:int) :
 
@@ -125,6 +133,15 @@ if __name__ == "__main__":
         sent = dbg.send_cmd(cmd, *data)
         print(f"\n{sent} Byte(s) sent.\n")
 
+    def recv_data(cmd:int, count:int=1) :
+
+        print("\n     HEX  BIN        DEC")
+
+        received = dbg.recv_data(cmd, count)
+        for n in range(count) :
+            print("[{0:02d}] {1:02X} : {1:08b} : {1:03d}".format(n+1, received[n]))
+
+        print(f"\n{count} Byte(s) received.\n")
 
     # Start interactive console.
     print("[4WireSerial] Starting interactive console:\n")
