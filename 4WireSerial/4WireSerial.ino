@@ -76,13 +76,13 @@ void loop() {
 
         else if(cmd == CMD::STB_HIGH) {
             
-            pinMode(stb, HIGH);
+            digitalWrite(stb, HIGH);
             Serial.write(0x00); //ACK
         }
 
         else if(cmd == CMD::STB_LOW) {
 
-            pinMode(stb, LOW);
+            digitalWrite(stb, LOW);
             Serial.write(0x00); //ACK
         }
     }
