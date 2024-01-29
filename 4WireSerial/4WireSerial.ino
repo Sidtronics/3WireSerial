@@ -34,7 +34,8 @@ void recvBytes(byte* buf, byte count);
 void setup() {
 
     Serial.begin(9600);
-    
+    Serial.write(0x00); // Ready signal
+
     pinMode(stb, OUTPUT);
     pinMode(clk, OUTPUT);
 

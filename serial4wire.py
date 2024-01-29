@@ -18,6 +18,7 @@ class SerialDevice:
     def __init__(self, port):
         self.ser = serial.Serial()
         self.ser.port = port
+        self.ser.baudrate = 9600
 
         print("[4WireSerial] Waiting for device at port:", self.ser.name)
         while True:
@@ -27,7 +28,11 @@ class SerialDevice:
                 pass
             else:
                 print("[4WireSerial] Port opened at:", self.ser.name)
+                print("[4WireSerial] Waiting for ready signal...")
                 break
+
+        self.ser.read()  # wait for ready signal
+        print("[4WireSerial] Device ready!")
 
     # Low level methods:
 
