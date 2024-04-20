@@ -1,5 +1,5 @@
 # 4WireSerial
-Simple tool to communicate with 4-wire serial interface devices through Arduino. Also supports 3-wire serial interface.
+Simple command line tool to communicate with 4-wire serial interface devices through Arduino. Also supports 3-wire serial interface.
 
 Supports devices with following pinouts:
 + 4-wire serial interface (strobe, clock, data_in, data_out)
@@ -75,7 +75,10 @@ Change default pins in `4WireSerial/4WireSerial.ino`
 ### API
 Import serial4wire in your project.
 ### `class serial4wire.SerialDevice`
-> \_\_init__(port)
+
+---
+
++ #### `__init__(port)`
 
 `Parameters`:
 
@@ -87,7 +90,9 @@ port - Port name. eg.
 Will wait untill the port is opened at given port name.
 Make sure you provide correct port name or it will stall your code.
 
-> send(*data:int)
+---
+
++ #### `send(*data:int)`
 
 `Parameters`:  
 
@@ -99,7 +104,9 @@ Make sure you provide correct port name or it will stall your code.
 Sends given integers byte by byte serially to your 3/4-wire serially interfaced device.  
 Note: Strobe value is not changed in process.
 
-> recv(count:int=1)
+---
+
++ #### `recv(count:int=1)`
 
 `Parameters`:
 
@@ -111,7 +118,9 @@ count - Number of bytes to receive.
 Receives bytes from device serially and returns received bytes in tuple.  
 Note: Strobe value is not changed in process.
 
-> stb(val:bool)
+---
+
++ #### `stb(val:bool)`
 
 `Parameters`:
 
@@ -121,7 +130,9 @@ val - value to set at strobe pin.
 
 Sets strobe pin value. True=HIGH, False=LOW.  
 
-> send_str(string:str)
+---
+
++ #### `send_str(string:str)`
 
 `Parameters`:
 
@@ -133,7 +144,9 @@ string -  String to send.
 Sends string in ascii encoded format.
 Note: Strobe value is not changed in process.
 
-> send_cmd(cmd:int, *data:int)
+---
+
++ #### `send_cmd(cmd:int, *data:int)`
 
 `Parameters`:
 
@@ -146,7 +159,9 @@ data - Data to send following the command.
 Sets strobe LOW then sends data following the command then sets strobe HIGH.
 If data = (), only command is sent.
 
-> recv_data(cmd:int, count:int)
+---
+
++ #### `recv_data(cmd:int, count:int)`
 
 `Parameters`: 
 
@@ -157,6 +172,9 @@ count - Number of bytes to receive.
 `Return type`: tuple
 
 Sets strobe LOW then sends command before receiving data then sets strobe HIGH.
+
+---
+
 ### Interactive Mode
 Executing `serial4wire.py` by itself will start an interactive console after connecting to device
 at port configured above. You can then use wrapper functions provided by same name as above API 
